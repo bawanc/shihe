@@ -21,13 +21,6 @@ public class GithubProvider {
                     .url("https://github.com/login/oauth/access_token")
                     .post(body)
                     .build();
-
-//            Request request = new Request.Builder()
-//                    .get()
-//                .url("https://github.com/login/oauth/access_token?client_id="+
-//                        accessTokenDTO.getClient_id()+"?client_secret="+accessTokenDTO.getClient_secret()+
-//                        "?code="+accessTokenDTO.getCode())
-//                .build();
             try (Response response = client.newCall(request).execute()) {
                 String string = response.body().string();
                 System.out.println(string);
