@@ -5,3 +5,6 @@
 [github OAuth]https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/
 
 ##工具
+
+
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate

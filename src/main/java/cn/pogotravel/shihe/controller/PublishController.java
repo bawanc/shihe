@@ -1,13 +1,16 @@
 package cn.pogotravel.shihe.controller;
 
+import cn.pogotravel.shihe.dto.QuestionDTO;
 import cn.pogotravel.shihe.mapper.QuestionMapper;
 import cn.pogotravel.shihe.mapper.UserMapper;
 import cn.pogotravel.shihe.model.Question;
 import cn.pogotravel.shihe.model.User;
+import cn.pogotravel.shihe.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,11 +21,23 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
 
     @Autowired
-    private QuestionMapper questionMapper;
+    QuestionService questionService;
+
 
     @GetMapping("/publish")
     public String pubLish()
     {
+        return "publish";
+    }
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable(name="id") Integer id,
+                       Model model){
+        QuestionDTO question=questionService.getById(id);
+        model.addAttribute("title",question.getTitle());
+        model.addAttribute("description",question.getDescription());
+        model.addAttribute("tag",question.getTag());
+        model.addAttribute("id",question.getId());
         return "publish";
     }
 
@@ -31,6 +46,7 @@ public class PublishController {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("tag") String tag,
+            @RequestParam("id") Integer id,
             HttpServletRequest request,
             Model model
     ){
@@ -48,10 +64,9 @@ public class PublishController {
         question.setTag(tag);
         question.setDescription(description);
         question.setCreator(user.getId());
-        question.setGmtcreate(System.currentTimeMillis());
-        question.setGmtmodified(question.getGmtcreate());
+        question.setId(id);
 
-        questionMapper.create(question);
+        questionService.createOrUpdate(question);
         return "redirect:/";
     }
 }
