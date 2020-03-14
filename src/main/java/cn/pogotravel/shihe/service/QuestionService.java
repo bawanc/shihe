@@ -4,6 +4,7 @@ import cn.pogotravel.shihe.dto.PaginationDTO;
 import cn.pogotravel.shihe.dto.QuestionDTO;
 import cn.pogotravel.shihe.exception.CustomizeErrorCode;
 import cn.pogotravel.shihe.exception.CustomizeException;
+import cn.pogotravel.shihe.mapper.QuestionExtMapper;
 import cn.pogotravel.shihe.mapper.QuestionMapper;
 import cn.pogotravel.shihe.mapper.UserMapper;
 import cn.pogotravel.shihe.model.Question;
@@ -21,6 +22,8 @@ import java.util.List;
 public class QuestionService {
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
     @Autowired
     private UserMapper userMapper;
     public PaginationDTO list(Integer page, Integer size) {
@@ -150,5 +153,14 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Integer id) {
+
+        Question question = new Question();
+        question.setId(id);
+        question.setViewcount(1);
+        //ctrl + atl +v  new Question
+        questionExtMapper.incView(question);
     }
 }
