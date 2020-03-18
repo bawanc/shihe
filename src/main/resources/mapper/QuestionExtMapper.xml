@@ -26,4 +26,11 @@
     viewcount = viewcount+#{viewcount,jdbcType=INTEGER}
     where id=#{id}
   </update>
+  <update id="incCommentCount" parameterType="cn.pogotravel.shihe.model.Question">
+    update question
+    set
+    commentcount = commentcount+#{conmentCount,jdbcType=INTEGER}
+    where id=#{id}
+  </update>
+
 </mapper>
