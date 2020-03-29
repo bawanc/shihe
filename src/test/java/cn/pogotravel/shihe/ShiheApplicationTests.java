@@ -11,6 +11,7 @@ public class ShiheApplicationTests {
 
     @Test
     public void contextLoads() {
+        System.out.println("kdjflkajdf");
     }
 
 }
