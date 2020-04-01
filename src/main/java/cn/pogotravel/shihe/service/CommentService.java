@@ -74,6 +74,7 @@ public class CommentService {
 
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
         CommentExample commentExample = new CommentExample();
+
         commentExample.createCriteria().andParentidEqualTo(id).
                 andTypeEqualTo(type.getType());//type ctrl+alt+p
         //commentExample.setOrderByClause("gmtcreate desc");

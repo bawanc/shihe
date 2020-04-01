@@ -64,7 +64,7 @@ function collapseComments(e) {
         e.classList.remove("active");
     } else {
         var subCommentContainer = $("#comment-" + id);
-        var itemLength=subCommentContainer.children().length;
+        var itemLength = subCommentContainer.children().length;
         if (itemLength != 1) {
             //展开二级评论
             comments.addClass("in");
@@ -113,7 +113,23 @@ function collapseComments(e) {
             });
         }
     }
+}
 
-
+function selectTag(e) {
+    var value=e.getAttribute("data-tag");
+    var previous = $("#tag").val();
+    if (previous.indexOf(value) == -1) {
+        if (previous) {
+            $("#tag").val(previous + ',' + value);
+        } else {
+            $("#tag").val(value);
+        }
+    }
 
 }
+
+function showSelectTag() {
+    $("#select-tag").show();
+}
+
+

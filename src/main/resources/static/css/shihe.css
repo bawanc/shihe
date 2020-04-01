@@ -28,10 +28,12 @@ body{
 .profile .section{
     margin: 15px;
 }
+
+
+
 .shihe-menu{
     color:#999;
     font-size: 12px;
-    display: block;
     font-size: 13px;
     margin-bottom: 15px;
 }
@@ -67,6 +69,30 @@ body{
 }
 .question-title{
     margin-top: 25px;
+}
+.publish-tag-tab{
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.publish-tag-tab .label-info{
+    margin: 5px 5px;
+    white-space: normal;
+    display: inline-block;
+}
+.chile-picture{
+    width: 100%;
+}
+.question-related{
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+}
+.question-tag{
+    margin-right: 5px;
 }
 .sub-comments{
     border-radius: 5px;
