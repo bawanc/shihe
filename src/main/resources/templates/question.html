@@ -7,10 +7,16 @@
     <script src="/js/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+
+
+    <link rel="stylesheet" href="/css/editormd.preview.min.css"/>
     <link rel="stylesheet" href="/css/shihe.css"/>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="/js/moment.js" type="application/javascript"></script>
     <script src="/js/shihe.js" type="application/javascript"></script>
+    <script src="/js/editormd.min.js" type="application/javascript"></script>
+    <script src="/js/lib/marked.min.js"></script>
+    <script src="/js/lib/prettify.min.js"></script>
 
 </head>
 <body>
@@ -28,7 +34,21 @@
                 阅读数：<span th:text="${question.viewcount}"></span>
             </span>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
+
+                <!--内容-->
+                <!--<div id="test-markdown-view">
+                    &lt;!&ndash;<textarea style="display: none;" th:text="${question.description}"></textarea>&ndash;&gt;
+                </div>-->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="question-view">
+                    <textarea style="display: none;" th:text="${question.description}"></textarea>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        editormd.markdownToHTML("question-view",{});
+                    });
+                </script>
+
+
                 <br>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -82,28 +102,6 @@
                             <!--二级回复-->
                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 collapse sub-comments"
                             th:id="${'comment-'+comment.id}">
-                             <!--
-                                <div class="col-lg-12 col-lg-12 col-sm-12 col-xs-12 comments" th:each="comment:${comments}">
-                                    <div class="media">
-                                        <div class="media-left">
-                                            <a href="#">
-                                                <img class="media-object img-rounded"
-                                                     th:src="${comment.user.avatarUrl}"/>
-                                            </a>
-                                        </div>
-                                        <div class="media-body">
-                                            <h5 class="media-heading">
-                                                <span th:text="${comment.user.name}"></span>
-                                            </h5>
-                                            <div th:text="${comment.content}"></div>
-                                            <div class="menu">
-                                                <span th:text="${#dates.format(comment.gmtcreate,'yyyy-MM-dd')}"
-                                                      class="pull-right"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                -->
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="text" class="form-control" placeholder="评论一下" th:id="${'input-'+comment.id}">
                                     <button type="button" class="btn btn-success pull-right" onclick="comment(this)" th:data-id="${comment.id}">评论</button>
@@ -125,15 +123,12 @@
                     <div class="media" style="padding-bottom: 5px">
                         <div class="media-left">
                             <a href="#">
-                                <img class="media-object img-rounded" th:src="${question.user.avatarUrl}"/>
-                               <!-- <img class="media-object img-rounded" th:src="${question.user.getAvatarUrl()}"/>-->
-                                <!--<img class="media-object img-rounded"
-                                     src="https://avatars1.githubusercontent.com/u/41281179?v=4"/>-->
+                                <img class="media-object img-rounded" th:src="${session.user!=null ? session.user.avatarUrl:'/images/user.png'}"/>
                             </a>
                         </div>
                         <div class="media-body">
                             <h5 class="media-heading">
-                                <span th:text="${question.user.name}"></span>
+                                <span th:text="${session.user!=null ? session.user.name:'匿名用户'}"></span>
                             </h5>
                         </div>
                     </div>
@@ -154,8 +149,6 @@
                     <div class="media-left">
                         <a href="#">
                             <img class="media-object img-rounded" th:src="${question.user.avatarUrl}"/>
-                            <!--<img class="media-object img-rounded"
-                                 src="https://avatars1.githubusercontent.com/u/41281179?v=4"/>-->
                         </a>
                     </div>
                     <div class="media-body">
@@ -184,5 +177,6 @@
         </div>
     </div>
 </div>
+<div th:insert="~{footer::foot}"></div>
 </body>
 </html>

@@ -20,7 +20,7 @@
   <update id="incCommentCount" parameterType="cn.pogotravel.shihe.model.Comment">
     update comment
     set
-    commentcount = commentcount+#{conmentCount,jdbcType=INTEGER}
+    commentcount = commentcount+#{commentcount,jdbcType=INTEGER}
     where id=#{id}
   </update>
 </mapper>

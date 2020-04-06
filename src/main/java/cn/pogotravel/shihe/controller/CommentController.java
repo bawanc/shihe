@@ -44,7 +44,7 @@ public class CommentController {
         //commentService.insert(comment);
 //        comment.setCommentator(user.getId());
         comment.setCommentator(user.getId());
-        commentMapper.insert(comment);
+        commentService.insert(comment,user);
         return ResultDTO.okOf();
     }
     @ResponseBody

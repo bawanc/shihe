@@ -2,6 +2,7 @@ package cn.pogotravel.shihe.service;
 
 import cn.pogotravel.shihe.dto.PaginationDTO;
 import cn.pogotravel.shihe.dto.QuestionDTO;
+import cn.pogotravel.shihe.dto.QuestionQueryDTO;
 import cn.pogotravel.shihe.exception.CustomizeErrorCode;
 import cn.pogotravel.shihe.exception.CustomizeException;
 import cn.pogotravel.shihe.mapper.QuestionExtMapper;
@@ -29,12 +30,21 @@ public class QuestionService {
     private QuestionExtMapper questionExtMapper;
     @Autowired
     private UserMapper userMapper;
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search,Integer page, Integer size) {
+
+        if(StringUtils.isNotBlank(search)){
+            String[] tags=StringUtils.split(search,' ');
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
 
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalPage;
 
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
 
 
         if (totalCount %size==0) {
@@ -59,7 +69,9 @@ public class QuestionService {
 //        List<Question> questions = questionMapper.list(offset,size);
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmtcreate desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setPage(page);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
 
@@ -71,11 +83,11 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
 
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 
-    public PaginationDTO list(Long userId, Integer page, Integer size) {
+    public PaginationDTO list( Long userId, Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalPage;
 
@@ -122,7 +134,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
 
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 

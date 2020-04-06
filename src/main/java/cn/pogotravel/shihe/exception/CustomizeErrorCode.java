@@ -7,7 +7,10 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     SYS_ERROR(2004,"服务已经不行了，稍后再试试。。。。。"),
     TYPE_PARAM_WRONG(2005,"评论类型错误或者不存在！"),
     COMMENT_NOT_FOUND(2006,"回复的评论不在了，要不换一个试试？"),
-    CONTENT_IS_EMPTY(2007,"输入内容不能为空！");
+    CONTENT_IS_EMPTY(2007,"输入内容不能为空！"),
+    READ_NOTIFICATION_FAIL(2008,"这是别人的信息！"),
+    NOTIFICATION_NOT_FOUND(2009,"消息不翼而飞了！"),
+    FILE_UPLOAD_FAIL(2010,"图片上传失败！");
 
     @Override
     public String getMessage() {

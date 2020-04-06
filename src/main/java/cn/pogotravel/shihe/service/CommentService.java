@@ -2,6 +2,9 @@ package cn.pogotravel.shihe.service;
 
 import cn.pogotravel.shihe.dto.CommentDTO;
 import cn.pogotravel.shihe.enums.CommentTypeEnum;
+import cn.pogotravel.shihe.enums.NotificationEnum;
+import cn.pogotravel.shihe.enums.NotificationStatusEnum;
+import cn.pogotravel.shihe.enums.NotificationTypeEnum;
 import cn.pogotravel.shihe.exception.CustomizeErrorCode;
 import cn.pogotravel.shihe.exception.CustomizeException;
 import cn.pogotravel.shihe.mapper.*;
@@ -30,9 +33,11 @@ public class CommentService {
     UserMapper userMapper;
     @Autowired
     private CommentExtMapper commentExtMapper;
+    @Autowired
+    private NotificationOneMapper notificationMapper;
 
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         if(comment.getParentid()==null||comment.getParentid()==0){
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
@@ -48,15 +53,28 @@ public class CommentService {
             }
             commentMapper.insert(comment);
 
+
+
+            Question question = questionMapper.selectByPrimaryKey(dbComment.getParentid());
+            if(question==null)
+            {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
             //增加评论数
             Comment parentComment = new Comment();
             parentComment.setParentid(comment.getParentid());
             parentComment.setCommentcount(1);
             commentExtMapper.incCommentCount(parentComment);
-//            CommentDTO parentComment = new CommentDTO();
-//            parentComment.setParentid(comment.getParentid());
-//            parentComment.setCommentcount(1);
-//            commentExtMapper.incCommentCount(parentComment);
+            NotificationOne notification= new NotificationOne();
+            notification.setGmtcreate(System.currentTimeMillis());
+            notification.setType(NotificationEnum.REPLY_COMMENT.getType());
+            notification.setOuterid(question.getId());
+            notification.setNotifier(comment.getCommentator());
+            notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+            notification.setReceiver(dbComment.getCommentator());
+            notification.setNotifiername(commentator.getName());
+            notification.setOutertitle(question.getTitle());
+            notificationMapper.insert(notification);
 
         }else{
             //回复问题
@@ -65,9 +83,27 @@ public class CommentService {
             {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            comment.setCommentcount(0);
             commentMapper.insert(comment);
             question.setCommentcount(1);
             questionExtMapper.incCommentCount(question);
+
+
+            if(question.getCreator()==comment.getCommentator()){
+                return;
+            }
+            NotificationOne notification= new NotificationOne();
+            notification.setGmtcreate(System.currentTimeMillis());
+            notification.setType(NotificationEnum.REPLY_QUESTION.getType());
+
+            notification.setOuterid(question.getId());
+            notification.setNotifier(comment.getCommentator());
+            notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+            notification.setReceiver(question.getCreator());
+            notification.setNotifiername(commentator.getName());
+            notification.setOutertitle(question.getTitle());
+            notificationMapper.insert(notification);
+
 
         }
     }
