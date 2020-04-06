@@ -5,6 +5,7 @@ import cn.pogotravel.shihe.dto.GithubUserDTO;
 import cn.pogotravel.shihe.model.User;
 import cn.pogotravel.shihe.provider.GithubProvider;
 import cn.pogotravel.shihe.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 public class AuthorizeController {
 
     @Autowired
@@ -35,9 +37,9 @@ public class AuthorizeController {
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
-                           @RequestParam(name = "state") String state ,
+                           @RequestParam(name = "state") String state,
                            HttpServletRequest request,
-                           HttpServletResponse response){
+                           HttpServletResponse response) {
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
@@ -46,7 +48,7 @@ public class AuthorizeController {
         accessTokenDTO.setState(state);
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUserDTO githubUserDTO = githubProvider.gitUser(accessToken);
-        if (githubUserDTO != null && githubUserDTO.getId()!=null){
+        if (githubUserDTO != null && githubUserDTO.getId() != null) {
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
@@ -55,18 +57,20 @@ public class AuthorizeController {
 
             user.setAvatarUrl(githubUserDTO.getAvatar_url());
             userService.createOrUpdate(user);
-            response.addCookie(new Cookie("token",token));
+            response.addCookie(new Cookie("token", token));
             //request.getSession().setAttribute("user",githubUserDTO);
             return "redirect:/";
+        } else {
+            log.error("callback get gith error,{}", githubUserDTO);
+            return "redirect:/";
         }
-        return "redirect:/";
     }
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request,
-                         HttpServletResponse response){
+                         HttpServletResponse response) {
         request.getSession().removeAttribute("user");
-        Cookie cookie= new Cookie("token",null);
+        Cookie cookie = new Cookie("token", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return "redirect:/";
