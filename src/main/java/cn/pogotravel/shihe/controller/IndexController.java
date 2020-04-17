@@ -21,7 +21,7 @@ public class IndexController {
     @Autowired
     private QuestionService questionService;
 
-    @GetMapping("/")
+    @GetMapping("/index1")
     public String index(Model model,
                         @RequestParam(name = "page",defaultValue = "1") Integer page,
                         @RequestParam(name = "size",defaultValue = "5") Integer size,
@@ -32,5 +32,10 @@ public class IndexController {
         model.addAttribute("search",search);
 
         return "index";
+    }
+    @GetMapping("/")
+    public String login() {
+
+        return "login";
     }
 }
